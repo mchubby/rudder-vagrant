@@ -21,23 +21,21 @@ set -e
 
 # Fetch parameters
 KEYSERVER=keyserver.ubuntu.com
-KEY=474A19E8
+KEY=9322C330474A19E8
 
 # Make sure we don't run interactive commands
 export DEBIAN_FRONTEND=noninteractive
 
 # Accept the Rudder repository key
-wget --quiet -O- "https://${KEYSERVER}/pks/lookup?op=get&search=0x${KEY}" | apt-key add -
+wget -O "/tmp/${KEY}.asc" "https://${KEYSERVER}/pks/lookup?op=get&search=0x${KEY}" || exit 1
 
-# Update APT cache
-apt-get update
+gpg2 --ignore-time-conflict --keyid-format 0xlong --fingerprint "/tmp/${KEY}.asc" | grep -i $key || exit 1
+apt-key add < "/tmp/${KEY}.asc"
 
-apt-get --assume-yes install lsb-release
-
-# Add latest Rudder repository
+# Update APT cache, then add latest Rudder repository
+# TODO: check if provided Debian image already has lsb-release
+apt-get update && apt-get --assume-yes --no-install-recommends install lsb-release || exit 1
 echo "deb http://www.rudder-project.org/apt-latest/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/rudder.list
-
-# Update APT cache
 apt-get update
 
 # Configure name resolution
