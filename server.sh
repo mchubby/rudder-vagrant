@@ -27,10 +27,10 @@ LDAPRESET="yes"
 ALLOWEDNETWORK[0]='192.168.42.0/24'
 
 # Packages required by Rudder
-apt-get --assume-yes install rudder-server-root
+apt-get --assume-yes --no-install-recommends install rudder-server-root
 
 # Initialize Rudder
 /opt/rudder/bin/rudder-init.sh $LDAPRESET ${ALLOWEDNETWORK[0]} < /dev/null > /dev/null 2>&1
 
 echo "Rudder server install: FINISHED" |tee rudder-install.log
-echo "You can now access the Rudder web interface on https://localhost:8081/" |tee rudder-install.log
+echo "You can now access the Rudder web interface on https://127.0.0.1:8081/" |tee rudder-install.log
